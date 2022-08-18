@@ -1,0 +1,62 @@
+syntax = "proto3";
+package babylon.epoching.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "babylon/epoching/v1/params.proto";
+import "babylon/epoching/v1/epoching.proto";
+
+option go_package = "github.com/babylonchain/babylon/x/epoching/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Params queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/babylon/epoching/v1/params";
+  }
+
+  // CurrentEpoch queries the current epoch
+  rpc CurrentEpoch(QueryCurrentEpochRequest) returns (QueryCurrentEpochResponse) {
+    option (google.api.http).get = "/babylon/epoching/v1/current_epoch";
+  }
+
+  // EpochMsgs queries the messages of a given epoch
+  rpc EpochMsgs(QueryEpochMsgsRequest) returns (QueryEpochMsgsResponse) {
+    option (google.api.http).get = "/babylon/epoching/v1/epoch_msgs";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  babylon.epoching.v1.Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryCurrentEpochRequest is request type for the Query/CurrentEpoch RPC method
+message QueryCurrentEpochRequest {}
+
+// QueryCurrentEpochResponse is response type for the Query/CurrentEpoch RPC method
+message QueryCurrentEpochResponse { 
+  // current_epoch is the current epoch number
+  uint64 current_epoch = 1;
+  // epoch_boundary is the height of this epoch's last block
+  uint64 epoch_boundary = 2;
+}
+
+// QueryEpochMsgsRequest is request type for the Query/EpochMsgs RPC method
+message QueryEpochMsgsRequest {
+  // pagination defines whether to have the pagination in the response
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryEpochMsgsResponse is response type for the Query/EpochMsgs RPC method
+message QueryEpochMsgsResponse {
+  // msgs is the list of messages queued in the current epoch
+  repeated babylon.epoching.v1.QueuedMessage msgs = 1;
+  // pagination defines the pagination in the response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
