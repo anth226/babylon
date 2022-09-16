@@ -1,7 +1,6 @@
 package checkpointing
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/babylonchain/babylon/x/checkpointing/types"
@@ -25,22 +24,29 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper, req abci.RequestBeginBlock) 
 	// if this block is the second block of an epoch
 	epoch := k.GetEpoch(ctx)
 	if epoch.IsSecondBlock(ctx) {
-		// note that this epochNum is obtained before the BeginBlocker of the epoching module is executed
-		// meaning that the epochNum has not been incremented upon a new epoch
+		// note that this epochNum is obtained after the BeginBlocker of the epoching module is executed
+		// meaning that the epochNum has been incremented upon a new epoch
 		lch := ctx.BlockHeader().LastCommitHash
-		err := k.BuildRawCheckpoint(ctx, epoch.EpochNumber, lch)
+		ckpt, err := k.BuildRawCheckpoint(ctx, epoch.EpochNumber-1, lch)
 		if err != nil {
 			panic("failed to generate a raw checkpoint")
 		}
 
 		// emit BeginEpoch event
-		ctx.EventManager().EmitEvents(sdk.Events{
-			sdk.NewEvent(
-				types.EventTypeRawCheckpointGenerated,
-				sdk.NewAttribute(types.AttributeKeyEpochNumber, fmt.Sprint(epoch.EpochNumber)),
-			),
-		})
+		err = ctx.EventManager().EmitTypedEvent(
+			&types.EventCheckpointAccumulating{
+				Checkpoint: ckpt,
+			},
+		)
+		if err != nil {
+			panic(err)
+		}
 
-		// TODO: call BLS signer to send a BLS-sig transaction
+		go func() {
+			err = k.SendBlsSig(ctx, epoch.EpochNumber-1, lch)
+			if err != nil {
+				panic(err)
+			}
+		}()
 	}
 }

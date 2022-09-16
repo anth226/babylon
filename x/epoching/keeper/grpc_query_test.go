@@ -31,7 +31,6 @@ func FuzzParamsQuery(f *testing.F) {
 		// test the case of EpochInterval == 0
 		// after that, change EpochInterval to a random non-zero value
 		if epochInterval == 0 {
-			params.EpochInterval = 0
 			// validation should not pass with zero EpochInterval
 			require.Error(t, params.Validate())
 			params.EpochInterval = uint64(rand.Int())
@@ -108,6 +107,7 @@ func FuzzEpochMsgs(f *testing.F) {
 		}
 		// get epoch msgs
 		req := types.QueryEpochMsgsRequest{
+			EpochNum: 0,
 			Pagination: &query.PageRequest{
 				Limit: limit,
 			},
@@ -120,5 +120,15 @@ func FuzzEpochMsgs(f *testing.F) {
 			_, ok := txidsMap[string(resp.Msgs[idx].TxId)]
 			require.True(t, ok)
 		}
+
+		// epoch 1 is out of scope
+		req = types.QueryEpochMsgsRequest{
+			EpochNum: 1,
+			Pagination: &query.PageRequest{
+				Limit: limit,
+			},
+		}
+		_, err = queryClient.EpochMsgs(wctx, &req)
+		require.Error(t, err)
 	})
 }

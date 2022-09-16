@@ -2,7 +2,7 @@ package keeper_test
 
 import (
 	"github.com/babylonchain/babylon/testutil/datagen"
-	bbl "github.com/babylonchain/babylon/types"
+	bbn "github.com/babylonchain/babylon/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"math/rand"
 	"testing"
@@ -61,7 +61,7 @@ func FuzzHashesQuery(f *testing.F) {
 
 		// Test pagination key being invalid
 		// We want the key to have a positive length
-		bzSz := datagen.RandomIntOtherThan(bbl.BTCHeaderHashLen-1, bbl.BTCHeaderHashLen*10) + 1
+		bzSz := datagen.RandomIntOtherThan(bbn.BTCHeaderHashLen-1, bbn.BTCHeaderHashLen*10) + 1
 		key := datagen.GenRandomByteArray(bzSz)
 		pagination := constructRequestWithKey(key)
 		hashesRequest := types.NewQueryHashesRequest(pagination)
@@ -213,7 +213,7 @@ func FuzzMainChainQuery(f *testing.F) {
 
 		// Test pagination key being invalid
 		// We want the key to have a positive length
-		bzSz := datagen.RandomIntOtherThan(bbl.BTCHeaderHashLen-1, bbl.BTCHeaderHashLen*10) + 1
+		bzSz := datagen.RandomIntOtherThan(bbn.BTCHeaderHashLen-1, bbn.BTCHeaderHashLen*10) + 1
 		key := datagen.GenRandomByteArray(bzSz)
 		pagination := constructRequestWithKey(key)
 		mainchainRequest := types.NewQueryMainChainRequest(pagination)
@@ -314,6 +314,86 @@ func FuzzMainChainQuery(f *testing.F) {
 				pagination.Reverse = true
 			}
 			mainchainRequest = types.NewQueryMainChainRequest(pagination)
+		}
+	})
+}
+
+func FuzzTipQuery(f *testing.F) {
+	/*
+		Checks:
+		1. If the request is nil, (nil, error) is returned
+		2. The query returns the tip BTC header
+
+		Data generation:
+		- Generate a random tree of headers and insert into storage
+	*/
+	datagen.AddRandomSeedsToFuzzer(f, 100)
+	f.Fuzz(func(t *testing.T, seed int64) {
+		rand.Seed(seed)
+		blcKeeper, ctx := testkeeper.BTCLightClientKeeper(t)
+		sdkCtx := sdk.WrapSDKContext(ctx)
+
+		// Test nil input
+		resp, err := blcKeeper.Tip(sdkCtx, nil)
+		if resp != nil {
+			t.Errorf("Nil input led to a non-nil response")
+		}
+		if err == nil {
+			t.Errorf("Nil input led to a nil error")
+		}
+
+		tree := genRandomTree(blcKeeper, ctx, 1, 10)
+
+		query := types.NewQueryTipRequest()
+		resp, err = blcKeeper.Tip(sdkCtx, query)
+		if err != nil {
+			t.Errorf("valid input led to an error: %s", err)
+		}
+		if resp == nil {
+			t.Errorf("Valid input led to nil response")
+		}
+		if !resp.Header.Eq(tree.GetTip()) {
+			t.Errorf("Invalid header returned. Expected %s, got %s", tree.GetTip().Hash, resp.Header.Hash)
+		}
+	})
+}
+
+func FuzzBaseHeaderQuery(f *testing.F) {
+	/*
+		Checks:
+		1. If the request is nil, (nil, error) is returned
+		2. The query returns the base BTC header
+
+		Data generation:
+		- Generate a random tree of headers and insert into storage.
+	*/
+	datagen.AddRandomSeedsToFuzzer(f, 100)
+	f.Fuzz(func(t *testing.T, seed int64) {
+		rand.Seed(seed)
+		blcKeeper, ctx := testkeeper.BTCLightClientKeeper(t)
+		sdkCtx := sdk.WrapSDKContext(ctx)
+
+		// Test nil input
+		resp, err := blcKeeper.BaseHeader(sdkCtx, nil)
+		if resp != nil {
+			t.Errorf("Nil input led to a non-nil response")
+		}
+		if err == nil {
+			t.Errorf("Nil input led to a nil error")
+		}
+
+		tree := genRandomTree(blcKeeper, ctx, 1, 10)
+
+		query := types.NewQueryBaseHeaderRequest()
+		resp, err = blcKeeper.BaseHeader(sdkCtx, query)
+		if err != nil {
+			t.Errorf("valid input led to an error: %s", err)
+		}
+		if resp == nil {
+			t.Errorf("Valid input led to nil response")
+		}
+		if !resp.Header.Eq(tree.GetRoot()) {
+			t.Errorf("Invalid header returned. Expected %s, got %s", tree.GetRoot().Hash, resp.Header.Hash)
 		}
 	})
 }

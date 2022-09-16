@@ -5,8 +5,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
-	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+
+	bbn "github.com/babylonchain/babylon/types"
+
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
@@ -71,8 +75,24 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 			}
 
 			customAppTemplate, customAppConfig := initAppConfig()
+			err = server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig)
 
-			return server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig)
+			if err != nil {
+				return err
+			}
+
+			// command above initializes server context in given command, and merges
+			// all options inside srvCtx.Viper options. Therefore at this point all
+			// viper object should contain all info necessery to initalize global
+			// object
+			srvCtx := server.GetServerContextFromCmd(cmd)
+
+			btcConfig := bbn.ParseBtcOptionsFromConfig(srvCtx.Viper)
+			// WARNING: We are initiating global babylon btc config here in PersistentPreRunE,
+			// so all comands derived from root will be able to refence global object
+			// later
+			bbn.InitGlobalBtcConfig(btcConfig)
+			return nil
 		},
 	}
 
@@ -86,13 +106,10 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 func initAppConfig() (string, interface{}) {
 	// The following code snippet is just for reference.
 
-	type CustomAppConfig struct {
-		serverconfig.Config
-	}
-
 	// Optionally allow the chain developer to overwrite the SDK's default
 	// server config.
-	srvCfg := serverconfig.DefaultConfig()
+	babylonConfig := DefaultBabylonConfig()
+	babylonTemplate := DefaultBabylonTemplate()
 	// The SDK's default minimum gas price is set to "" (empty value) inside
 	// app.toml. If left empty by validators, the node will halt on startup.
 	// However, the chain developer can set a default app.toml value for their
@@ -105,13 +122,9 @@ func initAppConfig() (string, interface{}) {
 	//   own app.toml to override, or use this default value.
 	//
 	// In app, we set the min gas prices to 0.
-	srvCfg.MinGasPrices = "0stake"
+	babylonConfig.MinGasPrices = "0bbn"
 
-	customAppConfig := CustomAppConfig{
-		Config: *srvCfg,
-	}
-
-	return serverconfig.DefaultConfigTemplate, customAppConfig
+	return babylonTemplate, babylonConfig
 }
 
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
@@ -148,6 +161,10 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd)
+
+	startCmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|kwallet|pass|test)")
+	startCmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
+	startCmd.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign")
 }
 
 func queryCommand() *cobra.Command {
@@ -222,7 +239,8 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 		panic(err)
 	}
 
-	snapshotDir := filepath.Join(cast.ToString(appOpts.Get(flags.FlagHome)), "data", "snapshots")
+	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
+	snapshotDir := filepath.Join(homeDir, "data", "snapshots")
 	snapshotDB, err := sdk.NewLevelDB("metadata", snapshotDir)
 	if err != nil {
 		panic(err)
@@ -232,11 +250,31 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 		panic(err)
 	}
 
+	paths := strings.Split(homeDir, "/")
+	fromName := paths[len(paths)-2]
+
+	clientCtx, err := config.ReadFromClientConfig(
+		client.Context{}.
+			WithHomeDir(homeDir).
+			WithViper("").
+			WithKeyringDir(homeDir).
+			WithInput(os.Stdin).
+			WithFromName(fromName),
+	)
+	if err != nil {
+		panic(err)
+	}
+	privSigner, err := app.InitPrivSigner(clientCtx, homeDir, clientCtx.Keyring)
+	if err != nil {
+		panic(err)
+	}
+
 	return app.NewBabylonApp(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		a.encCfg,
+		privSigner,
 		appOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
@@ -264,14 +302,30 @@ func (a appCreator) appExport(
 		return servertypes.ExportedApp{}, errors.New("application home not set")
 	}
 
-	if height != -1 {
-		babylonApp = app.NewBabylonApp(logger, db, traceStore, false, map[int64]bool{}, homePath, uint(1), a.encCfg, appOpts)
+	clientCtx, err := config.ReadFromClientConfig(
+		client.Context{}.
+			WithHomeDir(homePath).
+			WithViper("").
+			WithKeyringDir(homePath).
+			WithInput(os.Stdin),
+	)
+	kr, err := client.NewKeyringFromBackend(clientCtx, keyring.BackendMemory)
+	if err != nil {
+		panic(err)
+	}
 
-		if err := babylonApp.LoadHeight(height); err != nil {
+	privSigner, err := app.InitPrivSigner(clientCtx, homePath, kr)
+	if err != nil {
+		panic(err)
+	}
+	if height != -1 {
+		babylonApp = app.NewBabylonApp(logger, db, traceStore, false, map[int64]bool{}, homePath, uint(1), a.encCfg, privSigner, appOpts)
+
+		if err = babylonApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		babylonApp = app.NewBabylonApp(logger, db, traceStore, true, map[int64]bool{}, homePath, uint(1), a.encCfg, appOpts)
+		babylonApp = app.NewBabylonApp(logger, db, traceStore, true, map[int64]bool{}, homePath, uint(1), a.encCfg, privSigner, appOpts)
 	}
 
 	return babylonApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)

@@ -290,6 +290,97 @@ func (m *QueryContainsResponse) GetContains() bool {
 	return false
 }
 
+// QueryContainsRequest is request type for the temporary Query/ContainsBytes RPC method.
+// It involves checking whether a hash is maintained by the module.
+type QueryContainsBytesRequest struct {
+	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+}
+
+func (m *QueryContainsBytesRequest) Reset()         { *m = QueryContainsBytesRequest{} }
+func (m *QueryContainsBytesRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryContainsBytesRequest) ProtoMessage()    {}
+func (*QueryContainsBytesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6293be71fb7ba6c4, []int{6}
+}
+func (m *QueryContainsBytesRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryContainsBytesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryContainsBytesRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryContainsBytesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryContainsBytesRequest.Merge(m, src)
+}
+func (m *QueryContainsBytesRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryContainsBytesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryContainsBytesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryContainsBytesRequest proto.InternalMessageInfo
+
+func (m *QueryContainsBytesRequest) GetHash() []byte {
+	if m != nil {
+		return m.Hash
+	}
+	return nil
+}
+
+// QueryContainsResponse is response type for the temporary Query/ContainsBytes RPC method.
+type QueryContainsBytesResponse struct {
+	Contains bool `protobuf:"varint,1,opt,name=contains,proto3" json:"contains,omitempty"`
+}
+
+func (m *QueryContainsBytesResponse) Reset()         { *m = QueryContainsBytesResponse{} }
+func (m *QueryContainsBytesResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryContainsBytesResponse) ProtoMessage()    {}
+func (*QueryContainsBytesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6293be71fb7ba6c4, []int{7}
+}
+func (m *QueryContainsBytesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryContainsBytesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryContainsBytesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryContainsBytesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryContainsBytesResponse.Merge(m, src)
+}
+func (m *QueryContainsBytesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryContainsBytesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryContainsBytesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryContainsBytesResponse proto.InternalMessageInfo
+
+func (m *QueryContainsBytesResponse) GetContains() bool {
+	if m != nil {
+		return m.Contains
+	}
+	return false
+}
+
 // QueryMainChainRequest is request type for the Query/MainChain RPC method.
 // It involves retrieving the canonical chain maintained by the module.
 type QueryMainChainRequest struct {
@@ -300,7 +391,7 @@ func (m *QueryMainChainRequest) Reset()         { *m = QueryMainChainRequest{} }
 func (m *QueryMainChainRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryMainChainRequest) ProtoMessage()    {}
 func (*QueryMainChainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6293be71fb7ba6c4, []int{6}
+	return fileDescriptor_6293be71fb7ba6c4, []int{8}
 }
 func (m *QueryMainChainRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -346,7 +437,7 @@ func (m *QueryMainChainResponse) Reset()         { *m = QueryMainChainResponse{}
 func (m *QueryMainChainResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryMainChainResponse) ProtoMessage()    {}
 func (*QueryMainChainResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6293be71fb7ba6c4, []int{7}
+	return fileDescriptor_6293be71fb7ba6c4, []int{9}
 }
 func (m *QueryMainChainResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -396,7 +487,7 @@ func (m *QueryTipRequest) Reset()         { *m = QueryTipRequest{} }
 func (m *QueryTipRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryTipRequest) ProtoMessage()    {}
 func (*QueryTipRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6293be71fb7ba6c4, []int{8}
+	return fileDescriptor_6293be71fb7ba6c4, []int{10}
 }
 func (m *QueryTipRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -433,7 +524,7 @@ func (m *QueryTipResponse) Reset()         { *m = QueryTipResponse{} }
 func (m *QueryTipResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryTipResponse) ProtoMessage()    {}
 func (*QueryTipResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6293be71fb7ba6c4, []int{9}
+	return fileDescriptor_6293be71fb7ba6c4, []int{11}
 }
 func (m *QueryTipResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -469,6 +560,86 @@ func (m *QueryTipResponse) GetHeader() *BTCHeaderInfo {
 	return nil
 }
 
+type QueryBaseHeaderRequest struct {
+}
+
+func (m *QueryBaseHeaderRequest) Reset()         { *m = QueryBaseHeaderRequest{} }
+func (m *QueryBaseHeaderRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryBaseHeaderRequest) ProtoMessage()    {}
+func (*QueryBaseHeaderRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6293be71fb7ba6c4, []int{12}
+}
+func (m *QueryBaseHeaderRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryBaseHeaderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryBaseHeaderRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryBaseHeaderRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryBaseHeaderRequest.Merge(m, src)
+}
+func (m *QueryBaseHeaderRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryBaseHeaderRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryBaseHeaderRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryBaseHeaderRequest proto.InternalMessageInfo
+
+type QueryBaseHeaderResponse struct {
+	Header *BTCHeaderInfo `protobuf:"bytes,1,opt,name=header,proto3" json:"header,omitempty"`
+}
+
+func (m *QueryBaseHeaderResponse) Reset()         { *m = QueryBaseHeaderResponse{} }
+func (m *QueryBaseHeaderResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryBaseHeaderResponse) ProtoMessage()    {}
+func (*QueryBaseHeaderResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6293be71fb7ba6c4, []int{13}
+}
+func (m *QueryBaseHeaderResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryBaseHeaderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryBaseHeaderResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryBaseHeaderResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryBaseHeaderResponse.Merge(m, src)
+}
+func (m *QueryBaseHeaderResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryBaseHeaderResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryBaseHeaderResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryBaseHeaderResponse proto.InternalMessageInfo
+
+func (m *QueryBaseHeaderResponse) GetHeader() *BTCHeaderInfo {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "babylon.btclightclient.v1.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "babylon.btclightclient.v1.QueryParamsResponse")
@@ -476,10 +647,14 @@ func init() {
 	proto.RegisterType((*QueryHashesResponse)(nil), "babylon.btclightclient.v1.QueryHashesResponse")
 	proto.RegisterType((*QueryContainsRequest)(nil), "babylon.btclightclient.v1.QueryContainsRequest")
 	proto.RegisterType((*QueryContainsResponse)(nil), "babylon.btclightclient.v1.QueryContainsResponse")
+	proto.RegisterType((*QueryContainsBytesRequest)(nil), "babylon.btclightclient.v1.QueryContainsBytesRequest")
+	proto.RegisterType((*QueryContainsBytesResponse)(nil), "babylon.btclightclient.v1.QueryContainsBytesResponse")
 	proto.RegisterType((*QueryMainChainRequest)(nil), "babylon.btclightclient.v1.QueryMainChainRequest")
 	proto.RegisterType((*QueryMainChainResponse)(nil), "babylon.btclightclient.v1.QueryMainChainResponse")
 	proto.RegisterType((*QueryTipRequest)(nil), "babylon.btclightclient.v1.QueryTipRequest")
 	proto.RegisterType((*QueryTipResponse)(nil), "babylon.btclightclient.v1.QueryTipResponse")
+	proto.RegisterType((*QueryBaseHeaderRequest)(nil), "babylon.btclightclient.v1.QueryBaseHeaderRequest")
+	proto.RegisterType((*QueryBaseHeaderResponse)(nil), "babylon.btclightclient.v1.QueryBaseHeaderResponse")
 }
 
 func init() {
@@ -487,49 +662,55 @@ func init() {
 }
 
 var fileDescriptor_6293be71fb7ba6c4 = []byte{
-	// 660 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x95, 0x4f, 0x6b, 0x13, 0x4f,
-	0x18, 0xc7, 0x33, 0xfd, 0x93, 0x5f, 0x7f, 0x53, 0x41, 0x1d, 0xab, 0xd4, 0x45, 0xb6, 0xed, 0x56,
-	0x6b, 0x6d, 0x75, 0xc6, 0xb4, 0x20, 0x1e, 0x04, 0x25, 0x05, 0xad, 0x07, 0x21, 0x86, 0xe0, 0x41,
-	0x04, 0x99, 0x8d, 0xe3, 0xee, 0x40, 0x33, 0xb3, 0xcd, 0x4e, 0x8b, 0xb9, 0x7a, 0xf0, 0x2c, 0x7a,
-	0xf3, 0xe0, 0xcd, 0x77, 0xe0, 0x8b, 0xe8, 0xb1, 0xe0, 0x45, 0x3c, 0x14, 0x69, 0x7d, 0x11, 0x1e,
-	0x65, 0x67, 0x9e, 0x4d, 0x4d, 0x24, 0xd9, 0x88, 0xbd, 0x84, 0xec, 0xe4, 0x79, 0xbe, 0xdf, 0xcf,
-	0x3c, 0x3b, 0xdf, 0x09, 0x0e, 0x42, 0x1e, 0x76, 0xb6, 0xb4, 0x62, 0xa1, 0x69, 0x6e, 0xc9, 0x28,
-	0xce, 0x3e, 0x85, 0x32, 0x6c, 0x7b, 0x47, 0xb4, 0x3b, 0x34, 0x69, 0x6b, 0xa3, 0xc9, 0x45, 0xa8,
-	0xa1, 0xbd, 0x35, 0x74, 0xb7, 0xe2, 0xcd, 0x44, 0x3a, 0xd2, 0xb6, 0x8a, 0x65, 0xdf, 0x5c, 0x83,
-	0x77, 0x29, 0xd2, 0x3a, 0xda, 0x12, 0x8c, 0x27, 0x92, 0x71, 0xa5, 0xb4, 0xe1, 0x46, 0x6a, 0x95,
-	0xc2, 0xaf, 0x2b, 0x4d, 0x9d, 0xb6, 0x74, 0xca, 0x42, 0x9e, 0x0a, 0xe7, 0xc3, 0x76, 0x2b, 0xa1,
-	0x30, 0xbc, 0xc2, 0x12, 0x1e, 0x49, 0x65, 0x8b, 0xa1, 0x76, 0x71, 0x00, 0x5e, 0xc2, 0xdb, 0xbc,
-	0x95, 0x0b, 0xae, 0x0e, 0x28, 0xea, 0xc3, 0xb5, 0xc5, 0xc1, 0x0c, 0x26, 0x8f, 0x33, 0xcf, 0x9a,
-	0x55, 0xa8, 0x8b, 0xed, 0x1d, 0x91, 0x9a, 0xe0, 0x09, 0x3e, 0xd7, 0xb3, 0x9a, 0x26, 0x5a, 0xa5,
-	0x82, 0xdc, 0xc5, 0x65, 0xe7, 0x34, 0x8b, 0xe6, 0xd1, 0xf2, 0xf4, 0xda, 0x02, 0x1d, 0x38, 0x0a,
-	0xea, 0x5a, 0xab, 0x13, 0x7b, 0x07, 0x73, 0xa5, 0x3a, 0xb4, 0x05, 0xcf, 0xc0, 0x6d, 0x93, 0xa7,
-	0xb1, 0xc8, 0xdd, 0xc8, 0x7d, 0x8c, 0x8f, 0x77, 0x0a, 0xd2, 0x4b, 0xd4, 0x8d, 0x85, 0x66, 0x63,
-	0xa1, 0x6e, 0xfc, 0x30, 0x16, 0x5a, 0xe3, 0x91, 0x80, 0xde, 0xfa, 0x6f, 0x9d, 0xc1, 0x67, 0x04,
-	0xd8, 0xb9, 0x3c, 0x60, 0x37, 0x70, 0x39, 0xb6, 0x2b, 0xb3, 0x68, 0x7e, 0x7c, 0xf9, 0x54, 0xf5,
-	0xce, 0xb7, 0x83, 0xb9, 0xdb, 0x91, 0x34, 0xf1, 0x4e, 0x48, 0x9b, 0xba, 0xc5, 0x60, 0x13, 0xcd,
-	0x98, 0x4b, 0x95, 0x3f, 0x30, 0xd3, 0x49, 0x44, 0x4a, 0xab, 0x8d, 0x8d, 0x4d, 0xc1, 0x5f, 0x88,
-	0x76, 0x26, 0x59, 0xed, 0x18, 0x91, 0xd6, 0x41, 0x8b, 0x3c, 0xe8, 0xa1, 0x1e, 0xb3, 0xd4, 0x57,
-	0x0b, 0xa9, 0x1d, 0x52, 0x0f, 0x76, 0x8c, 0x67, 0x2c, 0xf5, 0x86, 0x56, 0x86, 0x4b, 0xd5, 0x1d,
-	0x4b, 0x0d, 0x4f, 0x64, 0x56, 0x76, 0x20, 0xff, 0x0a, 0x6d, 0x95, 0x82, 0x75, 0x7c, 0xbe, 0xcf,
-	0x09, 0x26, 0xe4, 0xe1, 0xa9, 0x26, 0xac, 0x59, 0xbb, 0xa9, 0x7a, 0xf7, 0x39, 0x78, 0x0e, 0x4d,
-	0x8f, 0xb8, 0x54, 0x1b, 0x99, 0xdb, 0x49, 0xbf, 0xb6, 0x4f, 0x08, 0x5f, 0xe8, 0x77, 0x00, 0xae,
-	0x2a, 0xfe, 0x2f, 0xb6, 0x3b, 0x71, 0xaf, 0x6e, 0x7a, 0x6d, 0x79, 0xc8, 0x89, 0xeb, 0x6e, 0xfb,
-	0xa1, 0x7a, 0xa9, 0xeb, 0x79, 0xe3, 0xc9, 0xbd, 0xa7, 0xb3, 0xf8, 0xb4, 0xc5, 0x6c, 0xc8, 0x24,
-	0xcf, 0x49, 0x03, 0x9f, 0x39, 0x5e, 0x02, 0xe6, 0x7b, 0xb8, 0xec, 0xac, 0x61, 0x24, 0xa3, 0x23,
-	0x43, 0xdf, 0xda, 0xcf, 0x49, 0x3c, 0x69, 0x65, 0xc9, 0x3b, 0x84, 0xcb, 0x2e, 0x48, 0xe4, 0xc6,
-	0x10, 0x99, 0x3f, 0x13, 0xec, 0xd1, 0x51, 0xcb, 0x1d, 0x75, 0x70, 0xed, 0xf5, 0x97, 0x1f, 0xef,
-	0xc7, 0x16, 0xc9, 0x02, 0x1b, 0x70, 0x7b, 0xec, 0x56, 0xe0, 0x96, 0xb1, 0x50, 0x2e, 0x61, 0xc5,
-	0x50, 0x3d, 0x41, 0x2f, 0x86, 0xea, 0x0d, 0xee, 0x48, 0x50, 0x90, 0xc6, 0x0f, 0x08, 0x4f, 0xe5,
-	0xc7, 0x9a, 0xb0, 0x22, 0x9f, 0xbe, 0xa8, 0x79, 0x37, 0x47, 0x6f, 0x00, 0xb4, 0x55, 0x8b, 0x76,
-	0x85, 0x2c, 0x0e, 0x41, 0xcb, 0x23, 0x44, 0x3e, 0x22, 0xfc, 0x7f, 0xf7, 0x70, 0x93, 0x42, 0xb3,
-	0xfe, 0xa4, 0x79, 0x95, 0xbf, 0xe8, 0x00, 0xbe, 0xeb, 0x96, 0x6f, 0x89, 0x5c, 0x1e, 0xc2, 0xd7,
-	0xe2, 0xd2, 0xdd, 0x1f, 0xe4, 0x0d, 0xc2, 0xe3, 0x0d, 0x99, 0x90, 0x95, 0x22, 0xa3, 0xe3, 0xb3,
-	0xef, 0xad, 0x8e, 0x54, 0x0b, 0x38, 0x4b, 0x16, 0x67, 0x9e, 0xf8, 0x43, 0x70, 0x8c, 0x4c, 0xaa,
-	0xb5, 0xbd, 0x43, 0x1f, 0xed, 0x1f, 0xfa, 0xe8, 0xfb, 0xa1, 0x8f, 0xde, 0x1e, 0xf9, 0xa5, 0xfd,
-	0x23, 0xbf, 0xf4, 0xf5, 0xc8, 0x2f, 0x3d, 0xbd, 0x55, 0x74, 0xf7, 0xbd, 0xea, 0x97, 0xb4, 0x97,
-	0x61, 0x58, 0xb6, 0xff, 0x73, 0xeb, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff, 0xd4, 0x5b, 0x97, 0xa6,
-	0xda, 0x07, 0x00, 0x00,
+	// 757 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x96, 0xc1, 0x4f, 0x13, 0x4f,
+	0x14, 0xc7, 0x3b, 0xc0, 0xaf, 0xbf, 0xfa, 0xd0, 0xa8, 0x23, 0x2a, 0x6c, 0x4c, 0x81, 0x45, 0xa0,
+	0x82, 0xec, 0xd2, 0xa2, 0x86, 0x83, 0x89, 0xa6, 0x24, 0x8a, 0x07, 0x93, 0xda, 0x34, 0x1e, 0xd4,
+	0xc4, 0x4c, 0xeb, 0xb8, 0xbb, 0x09, 0xdd, 0x59, 0xba, 0x0b, 0xb1, 0x57, 0x0f, 0x9e, 0x8d, 0xde,
+	0x3c, 0x78, 0x30, 0xf1, 0xea, 0xc9, 0x3f, 0x82, 0x93, 0x21, 0xf1, 0x62, 0x3c, 0x10, 0x03, 0xfe,
+	0x21, 0x66, 0x67, 0xde, 0xb6, 0x6c, 0xb1, 0xdd, 0x25, 0x72, 0x21, 0xec, 0xec, 0x7b, 0xef, 0xfb,
+	0x99, 0x6f, 0x66, 0xbe, 0x5b, 0xd0, 0xeb, 0xac, 0xde, 0xde, 0x10, 0xae, 0x59, 0x0f, 0x1a, 0x1b,
+	0x8e, 0x65, 0x87, 0x7f, 0xb9, 0x1b, 0x98, 0x9b, 0x5b, 0xbc, 0xd5, 0x36, 0xbc, 0x96, 0x08, 0x04,
+	0x9d, 0xc0, 0x1a, 0x23, 0x5e, 0x63, 0x6c, 0x17, 0xb5, 0x31, 0x4b, 0x58, 0x42, 0x56, 0x99, 0xe1,
+	0x7f, 0xaa, 0x41, 0xbb, 0x62, 0x09, 0x61, 0x6d, 0x70, 0x93, 0x79, 0x8e, 0xc9, 0x5c, 0x57, 0x04,
+	0x2c, 0x70, 0x84, 0xeb, 0xe3, 0xdb, 0x85, 0x86, 0xf0, 0x9b, 0xc2, 0x37, 0xeb, 0xcc, 0xe7, 0x4a,
+	0xc7, 0xdc, 0x2e, 0xd6, 0x79, 0xc0, 0x8a, 0xa6, 0xc7, 0x2c, 0xc7, 0x95, 0xc5, 0x58, 0x3b, 0xd3,
+	0x07, 0xcf, 0x63, 0x2d, 0xd6, 0x8c, 0x06, 0x2e, 0xf6, 0x29, 0xea, 0xc1, 0x95, 0xc5, 0xfa, 0x18,
+	0xd0, 0x47, 0xa1, 0x66, 0x45, 0x4e, 0xa8, 0xf2, 0xcd, 0x2d, 0xee, 0x07, 0xfa, 0x63, 0xb8, 0x10,
+	0x5b, 0xf5, 0x3d, 0xe1, 0xfa, 0x9c, 0xde, 0x81, 0xac, 0x52, 0x1a, 0x27, 0x53, 0xa4, 0x30, 0x5a,
+	0x9a, 0x36, 0xfa, 0x5a, 0x61, 0xa8, 0xd6, 0xf2, 0xc8, 0xce, 0xde, 0x64, 0xa6, 0x8a, 0x6d, 0xfa,
+	0x33, 0x54, 0x5b, 0x67, 0xbe, 0xcd, 0x23, 0x35, 0x7a, 0x0f, 0xa0, 0xbb, 0x53, 0x1c, 0x3d, 0x67,
+	0x28, 0x5b, 0x8c, 0xd0, 0x16, 0x43, 0xd9, 0x8f, 0xb6, 0x18, 0x15, 0x66, 0x71, 0xec, 0xad, 0x1e,
+	0xea, 0xd4, 0xbf, 0x12, 0xc4, 0x8e, 0xc6, 0x23, 0x76, 0x0d, 0xb2, 0xb6, 0x5c, 0x19, 0x27, 0x53,
+	0xc3, 0x85, 0xd3, 0xe5, 0xdb, 0x3f, 0xf7, 0x26, 0x57, 0x2d, 0x27, 0xb0, 0xb7, 0xea, 0x46, 0x43,
+	0x34, 0x4d, 0xdc, 0x44, 0xc3, 0x66, 0x8e, 0x1b, 0x3d, 0x98, 0x41, 0xdb, 0xe3, 0xbe, 0x51, 0xae,
+	0xad, 0xad, 0x73, 0xf6, 0x82, 0xb7, 0xc2, 0x91, 0xe5, 0x76, 0xc0, 0xfd, 0x2a, 0xce, 0xa2, 0xf7,
+	0x63, 0xd4, 0x43, 0x92, 0x7a, 0x3e, 0x91, 0x5a, 0x21, 0xc5, 0xb0, 0x6d, 0x18, 0x93, 0xd4, 0x6b,
+	0xc2, 0x0d, 0x98, 0xe3, 0x76, 0x6c, 0xa9, 0xc0, 0x48, 0x28, 0x25, 0x0d, 0xf9, 0x57, 0x68, 0x39,
+	0x49, 0x5f, 0x81, 0x8b, 0x3d, 0x4a, 0xe8, 0x90, 0x06, 0xb9, 0x06, 0xae, 0x49, 0xb9, 0x5c, 0xb5,
+	0xf3, 0xac, 0x9b, 0x30, 0x11, 0x6b, 0x52, 0x03, 0x91, 0x91, 0x1e, 0x66, 0x44, 0x95, 0x55, 0xd0,
+	0xfe, 0xd6, 0x90, 0x42, 0xea, 0x39, 0xf2, 0x3d, 0x64, 0x8e, 0xbb, 0x16, 0x6e, 0xec, 0xa4, 0x4f,
+	0xc8, 0x67, 0x02, 0x97, 0x7a, 0x15, 0x90, 0xab, 0x0c, 0xff, 0xdb, 0xd2, 0x34, 0x75, 0x4a, 0x46,
+	0x4b, 0x85, 0x01, 0x87, 0xbb, 0xe3, 0xf0, 0x03, 0xf7, 0xa5, 0xa8, 0x46, 0x8d, 0x27, 0x77, 0x24,
+	0xce, 0xc3, 0x59, 0x89, 0x59, 0x73, 0xbc, 0xe8, 0x4a, 0xd6, 0xe0, 0x5c, 0x77, 0x09, 0x99, 0xef,
+	0x42, 0x56, 0x49, 0xa3, 0x25, 0xe9, 0x91, 0xb1, 0x4f, 0x1f, 0x47, 0x3f, 0xca, 0xcc, 0xe7, 0xea,
+	0x75, 0xa4, 0xf7, 0x14, 0x2e, 0x1f, 0x79, 0x73, 0x52, 0xb2, 0xa5, 0x6f, 0x39, 0xf8, 0x4f, 0x4e,
+	0xa7, 0xef, 0x08, 0x64, 0x55, 0x54, 0xd0, 0xa5, 0x01, 0x63, 0x8e, 0x66, 0x94, 0x66, 0xa4, 0x2d,
+	0x57, 0xd4, 0xfa, 0xb5, 0xd7, 0xdf, 0x7f, 0xbf, 0x1f, 0x9a, 0xa1, 0xd3, 0x66, 0x9f, 0x7c, 0xdc,
+	0x2e, 0x62, 0x8e, 0x4a, 0x28, 0x95, 0x21, 0xc9, 0x50, 0xb1, 0x28, 0x4b, 0x86, 0x8a, 0x47, 0x53,
+	0x2a, 0x28, 0xcc, 0x9b, 0x0f, 0x04, 0x72, 0xd1, 0x95, 0xa2, 0x66, 0x92, 0x4e, 0x4f, 0x98, 0x68,
+	0xcb, 0xe9, 0x1b, 0x10, 0x6d, 0x51, 0xa2, 0xcd, 0xd2, 0x99, 0x01, 0x68, 0xd1, 0xcd, 0xa5, 0x5f,
+	0x08, 0x9c, 0x89, 0xdd, 0x77, 0x7a, 0x23, 0xad, 0xe0, 0xe1, 0x3c, 0xd1, 0x6e, 0x1e, 0xb3, 0x0b,
+	0x59, 0x97, 0x25, 0xeb, 0x02, 0x2d, 0xa4, 0x60, 0x55, 0x78, 0x1f, 0x09, 0x9c, 0xea, 0x84, 0x00,
+	0x4d, 0x74, 0xa7, 0x37, 0x91, 0xb4, 0xe2, 0x31, 0x3a, 0x10, 0xf2, 0xba, 0x84, 0x9c, 0xa3, 0x57,
+	0x07, 0x40, 0x36, 0x99, 0xa3, 0x22, 0x9d, 0xbe, 0x21, 0x30, 0x5c, 0x73, 0x3c, 0xba, 0x90, 0x24,
+	0xd4, 0xcd, 0x08, 0x6d, 0x31, 0x55, 0x2d, 0xe2, 0xcc, 0x49, 0x9c, 0x29, 0x9a, 0x1f, 0x80, 0x13,
+	0x38, 0x1e, 0xfd, 0x44, 0x00, 0xba, 0x21, 0x40, 0x13, 0x37, 0x7e, 0x24, 0x4a, 0xb4, 0xd2, 0x71,
+	0x5a, 0x90, 0x6e, 0x49, 0xd2, 0xcd, 0xd3, 0xd9, 0x01, 0x74, 0x61, 0xa2, 0xaa, 0x40, 0x29, 0x57,
+	0x76, 0xf6, 0xf3, 0x64, 0x77, 0x3f, 0x4f, 0x7e, 0xed, 0xe7, 0xc9, 0xdb, 0x83, 0x7c, 0x66, 0xf7,
+	0x20, 0x9f, 0xf9, 0x71, 0x90, 0xcf, 0x3c, 0xb9, 0x95, 0xf4, 0xcd, 0x7c, 0xd5, 0x3b, 0x59, 0x7e,
+	0x44, 0xeb, 0x59, 0xf9, 0xfb, 0x68, 0xe5, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x2b, 0x69, 0xef,
+	0x32, 0x12, 0x0a, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -550,10 +731,16 @@ type QueryClient interface {
 	Hashes(ctx context.Context, in *QueryHashesRequest, opts ...grpc.CallOption) (*QueryHashesResponse, error)
 	// Contains checks whether a hash is maintained by the module.
 	Contains(ctx context.Context, in *QueryContainsRequest, opts ...grpc.CallOption) (*QueryContainsResponse, error)
+	// ContainsBytes is a temporary method that
+	// checks whether a hash is maintained by the module.
+	// See discussion at https://github.com/babylonchain/babylon/pull/132
+	// for more details.
+	ContainsBytes(ctx context.Context, in *QueryContainsBytesRequest, opts ...grpc.CallOption) (*QueryContainsBytesResponse, error)
 	// MainChain returns the canonical chain
 	MainChain(ctx context.Context, in *QueryMainChainRequest, opts ...grpc.CallOption) (*QueryMainChainResponse, error)
-	// BestHeader return best header on canonical chain
+	// Tip return best header on canonical chain
 	Tip(ctx context.Context, in *QueryTipRequest, opts ...grpc.CallOption) (*QueryTipResponse, error)
+	BaseHeader(ctx context.Context, in *QueryBaseHeaderRequest, opts ...grpc.CallOption) (*QueryBaseHeaderResponse, error)
 }
 
 type queryClient struct {
@@ -591,6 +778,15 @@ func (c *queryClient) Contains(ctx context.Context, in *QueryContainsRequest, op
 	return out, nil
 }
 
+func (c *queryClient) ContainsBytes(ctx context.Context, in *QueryContainsBytesRequest, opts ...grpc.CallOption) (*QueryContainsBytesResponse, error) {
+	out := new(QueryContainsBytesResponse)
+	err := c.cc.Invoke(ctx, "/babylon.btclightclient.v1.Query/ContainsBytes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *queryClient) MainChain(ctx context.Context, in *QueryMainChainRequest, opts ...grpc.CallOption) (*QueryMainChainResponse, error) {
 	out := new(QueryMainChainResponse)
 	err := c.cc.Invoke(ctx, "/babylon.btclightclient.v1.Query/MainChain", in, out, opts...)
@@ -609,6 +805,15 @@ func (c *queryClient) Tip(ctx context.Context, in *QueryTipRequest, opts ...grpc
 	return out, nil
 }
 
+func (c *queryClient) BaseHeader(ctx context.Context, in *QueryBaseHeaderRequest, opts ...grpc.CallOption) (*QueryBaseHeaderResponse, error) {
+	out := new(QueryBaseHeaderResponse)
+	err := c.cc.Invoke(ctx, "/babylon.btclightclient.v1.Query/BaseHeader", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
@@ -617,10 +822,16 @@ type QueryServer interface {
 	Hashes(context.Context, *QueryHashesRequest) (*QueryHashesResponse, error)
 	// Contains checks whether a hash is maintained by the module.
 	Contains(context.Context, *QueryContainsRequest) (*QueryContainsResponse, error)
+	// ContainsBytes is a temporary method that
+	// checks whether a hash is maintained by the module.
+	// See discussion at https://github.com/babylonchain/babylon/pull/132
+	// for more details.
+	ContainsBytes(context.Context, *QueryContainsBytesRequest) (*QueryContainsBytesResponse, error)
 	// MainChain returns the canonical chain
 	MainChain(context.Context, *QueryMainChainRequest) (*QueryMainChainResponse, error)
-	// BestHeader return best header on canonical chain
+	// Tip return best header on canonical chain
 	Tip(context.Context, *QueryTipRequest) (*QueryTipResponse, error)
+	BaseHeader(context.Context, *QueryBaseHeaderRequest) (*QueryBaseHeaderResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -636,11 +847,17 @@ func (*UnimplementedQueryServer) Hashes(ctx context.Context, req *QueryHashesReq
 func (*UnimplementedQueryServer) Contains(ctx context.Context, req *QueryContainsRequest) (*QueryContainsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Contains not implemented")
 }
+func (*UnimplementedQueryServer) ContainsBytes(ctx context.Context, req *QueryContainsBytesRequest) (*QueryContainsBytesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ContainsBytes not implemented")
+}
 func (*UnimplementedQueryServer) MainChain(ctx context.Context, req *QueryMainChainRequest) (*QueryMainChainResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MainChain not implemented")
 }
 func (*UnimplementedQueryServer) Tip(ctx context.Context, req *QueryTipRequest) (*QueryTipResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Tip not implemented")
+}
+func (*UnimplementedQueryServer) BaseHeader(ctx context.Context, req *QueryBaseHeaderRequest) (*QueryBaseHeaderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BaseHeader not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -701,6 +918,24 @@ func _Query_Contains_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_ContainsBytes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryContainsBytesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ContainsBytes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/babylon.btclightclient.v1.Query/ContainsBytes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ContainsBytes(ctx, req.(*QueryContainsBytesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Query_MainChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryMainChainRequest)
 	if err := dec(in); err != nil {
@@ -737,6 +972,24 @@ func _Query_Tip_Handler(srv interface{}, ctx context.Context, dec func(interface
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_BaseHeader_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryBaseHeaderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).BaseHeader(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/babylon.btclightclient.v1.Query/BaseHeader",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).BaseHeader(ctx, req.(*QueryBaseHeaderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "babylon.btclightclient.v1.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -754,12 +1007,20 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Contains_Handler,
 		},
 		{
+			MethodName: "ContainsBytes",
+			Handler:    _Query_ContainsBytes_Handler,
+		},
+		{
 			MethodName: "MainChain",
 			Handler:    _Query_MainChain_Handler,
 		},
 		{
 			MethodName: "Tip",
 			Handler:    _Query_Tip_Handler,
+		},
+		{
+			MethodName: "BaseHeader",
+			Handler:    _Query_BaseHeader_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -974,6 +1235,69 @@ func (m *QueryContainsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryContainsBytesRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryContainsBytesRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryContainsBytesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Hash) > 0 {
+		i -= len(m.Hash)
+		copy(dAtA[i:], m.Hash)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Hash)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryContainsBytesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryContainsBytesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryContainsBytesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Contains {
+		i--
+		if m.Contains {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *QueryMainChainRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1116,6 +1440,64 @@ func (m *QueryTipResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryBaseHeaderRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryBaseHeaderRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryBaseHeaderRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryBaseHeaderResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryBaseHeaderResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryBaseHeaderResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Header != nil {
+		{
+			size, err := m.Header.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -1204,6 +1586,31 @@ func (m *QueryContainsResponse) Size() (n int) {
 	return n
 }
 
+func (m *QueryContainsBytesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Hash)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryContainsBytesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Contains {
+		n += 2
+	}
+	return n
+}
+
 func (m *QueryMainChainRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1246,6 +1653,28 @@ func (m *QueryTipRequest) Size() (n int) {
 }
 
 func (m *QueryTipResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Header != nil {
+		l = m.Header.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryBaseHeaderRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *QueryBaseHeaderResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1759,6 +2188,160 @@ func (m *QueryContainsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *QueryContainsBytesRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryContainsBytesRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryContainsBytesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Hash = append(m.Hash[:0], dAtA[iNdEx:postIndex]...)
+			if m.Hash == nil {
+				m.Hash = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryContainsBytesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryContainsBytesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryContainsBytesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Contains", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Contains = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *QueryMainChainRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2042,6 +2625,142 @@ func (m *QueryTipResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: QueryTipResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Header == nil {
+				m.Header = &BTCHeaderInfo{}
+			}
+			if err := m.Header.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryBaseHeaderRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryBaseHeaderRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryBaseHeaderRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryBaseHeaderResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryBaseHeaderResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryBaseHeaderResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

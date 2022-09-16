@@ -2,12 +2,13 @@ package types_test
 
 import (
 	"bytes"
-	"github.com/babylonchain/babylon/testutil/datagen"
-	bbl "github.com/babylonchain/babylon/types"
-	"github.com/babylonchain/babylon/x/btclightclient/types"
-	"github.com/cosmos/cosmos-sdk/types/query"
 	"math/rand"
 	"testing"
+
+	"github.com/babylonchain/babylon/testutil/datagen"
+	bbn "github.com/babylonchain/babylon/types"
+	"github.com/babylonchain/babylon/x/btclightclient/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 func TestNewQueryParamsRequest(t *testing.T) {
@@ -23,7 +24,7 @@ func TestNewQueryParamsRequest(t *testing.T) {
 }
 
 func TestNewQueryHashesRequest(t *testing.T) {
-	headerBytes := bbl.GetBaseBTCHeaderBytes()
+	headerBytes := bbn.GetBaseBTCHeaderBytes()
 	headerHashBytes := headerBytes.Hash()
 	req := query.PageRequest{
 		Key: headerHashBytes.MustMarshal(),
@@ -45,9 +46,9 @@ func FuzzNewQueryContainsRequest(f *testing.F) {
 	datagen.AddRandomSeedsToFuzzer(f, 100)
 	f.Fuzz(func(t *testing.T, seed int64) {
 		rand.Seed(seed)
-		hexHash := datagen.GenRandomHexStr(bbl.BTCHeaderHashLen)
+		hexHash := datagen.GenRandomHexStr(bbn.BTCHeaderHashLen)
 
-		btcHeaderHashBytes, _ := bbl.NewBTCHeaderHashBytesFromHex(hexHash)
+		btcHeaderHashBytes, _ := bbn.NewBTCHeaderHashBytesFromHex(hexHash)
 
 		queryContains, err := types.NewQueryContainsRequest(hexHash)
 		if err != nil {
@@ -66,7 +67,7 @@ func FuzzNewQueryContainsRequest(f *testing.F) {
 }
 
 func TestNewQueryMainChainRequest(t *testing.T) {
-	headerBytes := bbl.GetBaseBTCHeaderBytes()
+	headerBytes := bbn.GetBaseBTCHeaderBytes()
 	req := query.PageRequest{
 		Key: headerBytes.MustMarshal(),
 	}

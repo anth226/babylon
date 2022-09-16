@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	bbn "github.com/babylonchain/babylon/types"
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
@@ -151,7 +152,7 @@ var (
 	_ servertypes.Application = (*BabylonApp)(nil)
 )
 
-// App extends an ABCI application, but with most of its parameters exported.
+// BabylonApp extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
 // capabilities aren't needed for testing.
 type BabylonApp struct {
@@ -213,9 +214,17 @@ func init() {
 // NewBabylonApp returns a reference to an initialized BabylonApp.
 func NewBabylonApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
-	homePath string, invCheckPeriod uint, encodingConfig appparams.EncodingConfig,
+	homePath string, invCheckPeriod uint, encodingConfig appparams.EncodingConfig, privSigner *PrivSigner,
 	appOpts servertypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp),
 ) *BabylonApp {
+	// we could also take it from global object which should be initilised in rootCmd
+	// but this way it makes babylon app more testable
+	btcConfig := bbn.ParseBtcOptionsFromConfig(appOpts)
+	powLimit := btcConfig.PowLimit()
+	// WARNING: We are initiating global babylon btc config  as first so other modules
+	// can use it from start. If it was already iniitlized in root cmd this will be
+	// noop
+	bbn.InitGlobalBtcConfig(btcConfig)
 
 	appCodec := encodingConfig.Marshaler
 	legacyAmino := encodingConfig.Amino
@@ -341,8 +350,11 @@ func NewBabylonApp(
 			appCodec,
 			keys[checkpointingtypes.StoreKey],
 			keys[checkpointingtypes.MemStoreKey],
+			privSigner.WrappedPV,
 			app.EpochingKeeper,
-			app.GetSubspace(checkpointingtypes.ModuleName))
+			app.GetSubspace(checkpointingtypes.ModuleName),
+			privSigner.ClientCtx,
+		)
 
 	// TODO for now use mocks, as soon as Checkpoining and lightClient will have correct interfaces
 	// change to correct implementations
@@ -356,8 +368,8 @@ func NewBabylonApp(
 			app.CheckpointingKeeper,
 			// TODO decide on proper values for those constants, also those should be taken
 			// from some global config
-			6,
-			10,
+			&powLimit,
+			btcConfig.CheckpointTag(),
 		)
 
 	app.BTCLightClientKeeper = *btclightclientKeeper.SetHooks(
@@ -438,7 +450,7 @@ func NewBabylonApp(
 		btccheckpointtypes.ModuleName,
 		checkpointingtypes.ModuleName,
 	)
-	// BBL does not want EndBlock processing in staking
+	// Babylon does not want EndBlock processing in staking
 	app.mm.OrderEndBlockers = append(app.mm.OrderEndBlockers[:2], app.mm.OrderEndBlockers[2+1:]...) // remove stakingtypes.ModuleName
 
 	// NOTE: The genutils module must occur after staking so that pools are

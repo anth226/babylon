@@ -1,7 +1,7 @@
 //go:build integration
 // +build integration
 
-package babylon_integration_test
+package babylon_integration
 
 import (
 	"context"
@@ -84,7 +84,7 @@ func waitForBlock(clients []*grpc.ClientConn, blockNumber int64) {
 
 func TestMain(m *testing.M) {
 
-	// This is needed so that all address prefixes are in bbl format
+	// This is needed so that all address prefixes are in Babylon format
 	appparams.SetAddressPrefixes()
 
 	for _, addr := range addresses {
@@ -128,11 +128,10 @@ func TestTestnetRuninng(t *testing.T) {
 // Check all nodes are properly initialized to genesis
 // TODO ultimatly we would like to check genesis related to all modules here.
 func TestBtcLightClientGenesis(t *testing.T) {
-	// TODO currently btclightclient hardcodes this header in some function. Ultimately
-	// we would like to get it from config file, and assert here that each node
-	// start with genesis header from this config file
-	hardcodedHeaderHash, _ := bbn.NewBTCHeaderHashBytesFromHex("00000000000000000002bf1c218853bc920f41f74491e6c92c6bc6fdc881ab47")
-	hardcodedHeaderHeight := uint64(736056)
+	// The default testnet directory uses the simnet genesis header as its base
+	// with height 0.
+	hardcodedHeader, _ := bbn.NewBTCHeaderBytesFromHex("0100000000000000000000000000000000000000000000000000000000000000000000003ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a45068653ffff7f2002000000")
+	hardcodedHeaderHeight := uint64(0)
 
 	for i, c := range clients {
 		lc := lightclient.NewQueryClient(c)
@@ -145,13 +144,13 @@ func TestBtcLightClientGenesis(t *testing.T) {
 			t.Fatalf("Test failed due to client error: %v to node with address %s", err, addresses[i])
 		}
 
-		if res.Header.Height != hardcodedHeaderHeight || !res.Header.Hash.Eq(&hardcodedHeaderHash) {
+		if res.Header.Height != hardcodedHeaderHeight || !res.Header.Hash.Eq(hardcodedHeader.Hash()) {
 			t.Errorf("Node with address %s started with unexpected header", addresses[i])
 		}
 	}
 }
 
-func TestNodeProgres(t *testing.T) {
+func TestNodeProgress(t *testing.T) {
 
 	// most probably nodes are after block 1 at this point, but to make sure we are waiting
 	// for block 1
@@ -177,9 +176,9 @@ func TestNodeProgres(t *testing.T) {
 	}
 
 	// TODO default epoch interval is equal to 10, we should retrieve it from config
-	// block 11 is first block of epoch 2, so if all clients are after block 11, they
+	// block 11 is first block of epoch 2, so if all clients are after block 12, they
 	// should be at epoch 2
-	waitForBlock(clients, 11)
+	waitForBlock(clients, 12)
 
 	for _, c := range clients {
 		epochingClient := epochingtypes.NewQueryClient(c)
@@ -197,5 +196,53 @@ func TestNodeProgres(t *testing.T) {
 		if currentEpochResponse.CurrentEpoch != 2 {
 			t.Errorf("Epoch after 10 blocks, should equal 2. Curent epoch %d", currentEpochResponse.CurrentEpoch)
 		}
+	}
+}
+
+func TestSendTx(t *testing.T) {
+	// we are waiting for middle of the epoch to avoid race condidions with bls
+	// signer sending transaction and incrementing account sequence numbers
+	// which may cause header tx to fail.
+	// TODO: Create separate account for sending transactions to avoid race
+	// conditions with validator acounts.
+	waitForBlock(clients, 15)
+
+	// TODO fix hard coded paths
+	node0dataPath := "../.testnets/node0/babylond"
+	node0genesisPath := "../.testnets/node0/babylond/config/genesis.json"
+
+	sender, err := NewTestTxSender(node0dataPath, node0genesisPath, clients[0])
+
+	if err != nil {
+		panic("failed to init sender")
+	}
+
+	tip1, err := sender.getBtcTip()
+
+	if err != nil {
+		t.Fatalf("Couldnot retrieve tip")
+	}
+
+	res, err := sender.insertNewEmptyHeader(tip1)
+
+	if err != nil {
+		t.Fatalf("could not insert new btc header")
+	}
+
+	_, err = WaitBtcForHeight(sender.Conn, tip1.Height+1)
+
+	if err != nil {
+		t.Log(res.TxResponse)
+		t.Fatalf("failed waiting for btc lightclient block")
+	}
+
+	tip2, err := sender.getBtcTip()
+
+	if err != nil {
+		t.Fatalf("Couldnot retrieve tip")
+	}
+
+	if tip2.Height != tip1.Height+1 {
+		t.Fatalf("Light client should progress by 1 one block")
 	}
 }

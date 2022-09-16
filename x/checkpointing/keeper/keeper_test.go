@@ -4,6 +4,7 @@ import (
 	"github.com/babylonchain/babylon/testutil/datagen"
 	testkeeper "github.com/babylonchain/babylon/testutil/keeper"
 	"github.com/babylonchain/babylon/x/checkpointing/types"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/stretchr/testify/require"
 	"math/rand"
 	"testing"
@@ -19,7 +20,7 @@ func FuzzKeeperAddRawCheckpoint(f *testing.F) {
 	datagen.AddRandomSeedsToFuzzer(f, 1)
 	f.Fuzz(func(t *testing.T, seed int64) {
 		rand.Seed(seed)
-		ckptKeeper, ctx, _ := testkeeper.CheckpointingKeeper(t)
+		ckptKeeper, ctx, _ := testkeeper.CheckpointingKeeper(t, nil, nil, client.Context{})
 
 		// test nil raw checkpoint
 		err := ckptKeeper.AddRawCheckpoint(ctx, nil)
@@ -41,7 +42,7 @@ func FuzzKeeperAddRawCheckpoint(f *testing.F) {
 		require.True(t, ckpt.Equal(mockCkptWithMeta))
 
 		// test existing raw checkpoint by epoch number
-		err = ckptKeeper.BuildRawCheckpoint(
+		_, err = ckptKeeper.BuildRawCheckpoint(
 			ctx,
 			mockCkptWithMeta.Ckpt.EpochNum,
 			datagen.GenRandomLastCommitHash(),
@@ -59,7 +60,7 @@ func FuzzKeeperCheckpointEpoch(f *testing.F) {
 	datagen.AddRandomSeedsToFuzzer(f, 1)
 	f.Fuzz(func(t *testing.T, seed int64) {
 		rand.Seed(seed)
-		ckptKeeper, ctx, cdc := testkeeper.CheckpointingKeeper(t)
+		ckptKeeper, ctx, cdc := testkeeper.CheckpointingKeeper(t, nil, nil, client.Context{})
 
 		mockCkptWithMeta := datagen.GenRandomRawCheckpointWithMeta()
 		ckptBytes := types.RawCkptToBytes(cdc, mockCkptWithMeta.Ckpt)
@@ -84,9 +85,10 @@ func FuzzKeeperSetCheckpointStatus(f *testing.F) {
 	datagen.AddRandomSeedsToFuzzer(f, 1)
 	f.Fuzz(func(t *testing.T, seed int64) {
 		rand.Seed(seed)
-		ckptKeeper, ctx, _ := testkeeper.CheckpointingKeeper(t)
+		ckptKeeper, ctx, _ := testkeeper.CheckpointingKeeper(t, nil, nil, client.Context{})
 
 		mockCkptWithMeta := datagen.GenRandomRawCheckpointWithMeta()
+		mockCkptWithMeta.Status = types.Accumulating
 		epoch := mockCkptWithMeta.Ckpt.EpochNum
 
 		_ = ckptKeeper.AddRawCheckpoint(

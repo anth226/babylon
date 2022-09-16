@@ -3,6 +3,9 @@ package keeper
 import (
 	"testing"
 
+	"math/big"
+
+	txformat "github.com/babylonchain/babylon/btctxformatter"
 	"github.com/babylonchain/babylon/x/btccheckpoint/keeper"
 	btcctypes "github.com/babylonchain/babylon/x/btccheckpoint/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -21,8 +24,7 @@ func NewBTCCheckpointKeeper(
 	t testing.TB,
 	lk btcctypes.BTCLightClientKeeper,
 	ek btcctypes.CheckpointingKeeper,
-	kDeep uint64,
-	wDeep uint64) (*keeper.Keeper, sdk.Context) {
+	powLimit *big.Int) (*keeper.Keeper, sdk.Context) {
 	storeKey := sdk.NewKVStoreKey(btcctypes.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(btcctypes.MemStoreKey)
 
@@ -49,8 +51,9 @@ func NewBTCCheckpointKeeper(
 		paramsSubspace,
 		lk,
 		ek,
-		kDeep,
-		wDeep,
+		powLimit,
+		// use MainTag tests
+		txformat.MainTag(),
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

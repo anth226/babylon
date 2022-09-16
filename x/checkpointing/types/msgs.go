@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/babylonchain/babylon/crypto/bls12381"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
@@ -37,7 +38,7 @@ func NewMsgWrappedCreateValidator(msgCreateVal *stakingtypes.MsgCreateValidator)
 
 func (m *MsgAddBlsSig) ValidateBasic() error {
 	// This function validates stateless message elements
-	_, err := sdk.AccAddressFromBech32(m.BlsSig.SignerAddress)
+	_, err := sdk.ValAddressFromBech32(m.BlsSig.SignerAddress)
 	if err != nil {
 		return err
 	}
@@ -48,12 +49,16 @@ func (m *MsgAddBlsSig) ValidateBasic() error {
 }
 
 func (m *MsgAddBlsSig) GetSigners() []sdk.AccAddress {
-	signer, err := sdk.AccAddressFromBech32(m.BlsSig.SignerAddress)
+	signer, err := sdk.ValAddressFromBech32(m.BlsSig.SignerAddress)
 	if err != nil {
 		panic(err)
 	}
 
-	return []sdk.AccAddress{signer}
+	return []sdk.AccAddress{sdk.AccAddress(signer)}
+}
+
+func (m *MsgWrappedCreateValidator) VerifyPoP(valPubkey cryptotypes.PubKey) bool {
+	return m.Key.Pop.IsValid(*m.Key.Pubkey, valPubkey)
 }
 
 func (m *MsgWrappedCreateValidator) ValidateBasic() error {

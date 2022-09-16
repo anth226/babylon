@@ -120,6 +120,16 @@ $(BUILDDIR)/:
 
 .PHONY: build build-linux
 
+mockgen_cmd=go run github.com/golang/mock/mockgen@v1.6.0
+
+mocks: $(MOCKS_DIR)
+	$(mockgen_cmd) -source=x/checkpointing/types/expected_keepers.go -package mocks -destination testutil/mocks/checkpointing_expected_keepers.go
+	$(mockgen_cmd) -source=x/checkpointing/keeper/bls_signer.go -package mocks -destination testutil/mocks/bls_signer.go
+.PHONY: mocks
+
+$(MOCKS_DIR):
+	mkdir -p $(MOCKS_DIR)
+
 distclean: clean tools-clean
 clean:
 	rm -rf \
@@ -435,19 +445,20 @@ localnet-build-dlv:
 
 localnet-build-nodes:
 	$(DOCKER) run --rm -v $(CURDIR)/.testnets:/data babylonchain/babylond \
-			  testnet init-files --v 4 -o /data --starting-ip-address 192.168.10.2 --keyring-backend=test
+			  testnet init-files --v 4 -o /data \
+			  --starting-ip-address 192.168.10.2 --keyring-backend=test \
+			  --chain-id chain-test
 	docker-compose up -d
 
-localnet-stop:
-	docker-compose down
-
-# localnet-start will run a 4-node testnet locally. The nodes are
-# based off the docker images in: ./contrib/images/babylond-env
+# localnet-start will run a testnet with 4 nodes, a bitcoin instance, and a vigilante instance
 localnet-start: localnet-stop localnet-build-env localnet-build-nodes
 
 # localnet-debug will run a 4-node testnet locally in debug mode
 # you can read more about the debug mode here: ./contrib/images/babylond-dlv/README.md
 localnet-debug: localnet-stop localnet-build-dlv localnet-build-nodes
+
+localnet-stop:
+	docker-compose down
 
 .PHONY: localnet-start localnet-stop localnet-debug localnet-build-env \
 localnet-build-dlv localnet-build-nodes

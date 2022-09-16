@@ -2,7 +2,6 @@ package types
 
 import (
 	"github.com/babylonchain/babylon/types"
-	"github.com/babylonchain/babylon/x/btccheckpoint/btcutils"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -12,30 +11,37 @@ import (
 // Modelling proofs as separate Proof1 and Proof2, as this is more explicit than
 // []*ParsedProof.
 type RawCheckpointSubmission struct {
-	Submitter sdk.AccAddress
-	Proof1    btcutils.ParsedProof
-	Proof2    btcutils.ParsedProof
+	Submitter      sdk.AccAddress
+	Proof1         ParsedProof
+	Proof2         ParsedProof
+	checkpointData []byte
 }
 
-func NewRawCheckpointSubmission(a sdk.AccAddress, p1 btcutils.ParsedProof, p2 btcutils.ParsedProof) RawCheckpointSubmission {
+func NewRawCheckpointSubmission(
+	a sdk.AccAddress,
+	p1 ParsedProof,
+	p2 ParsedProof,
+	checkpointData []byte,
+) RawCheckpointSubmission {
 	r := RawCheckpointSubmission{
-		Submitter: a,
-		Proof1:    p1,
-		Proof2:    p2,
+		Submitter:      a,
+		Proof1:         p1,
+		Proof2:         p2,
+		checkpointData: checkpointData,
 	}
 
 	return r
 }
 
-func (s *RawCheckpointSubmission) GetProofs() []*btcutils.ParsedProof {
-	return []*btcutils.ParsedProof{&s.Proof1, &s.Proof2}
+func (s *RawCheckpointSubmission) GetProofs() []*ParsedProof {
+	return []*ParsedProof{&s.Proof1, &s.Proof2}
 }
 
 func (s *RawCheckpointSubmission) GetRawCheckPointBytes() []byte {
-	var rawCheckpointData []byte
-	rawCheckpointData = append(rawCheckpointData, s.Proof1.OpReturnData...)
-	rawCheckpointData = append(rawCheckpointData, s.Proof2.OpReturnData...)
-	return rawCheckpointData
+	checkpointDataCopy := make([]byte, len(s.checkpointData))
+	// return copy, to avoid someone modifing original
+	copy(checkpointDataCopy, s.checkpointData)
+	return checkpointDataCopy
 }
 
 func (s *RawCheckpointSubmission) GetFirstBlockHash() types.BTCHeaderHashBytes {
@@ -46,7 +52,7 @@ func (s *RawCheckpointSubmission) GetSecondBlockHash() types.BTCHeaderHashBytes 
 	return s.Proof2.BlockHash
 }
 
-func toTransactionKey(p *btcutils.ParsedProof) TransactionKey {
+func toTransactionKey(p *ParsedProof) TransactionKey {
 	hashBytes := p.BlockHash
 	return TransactionKey{
 		Index: p.TransactionIdx,

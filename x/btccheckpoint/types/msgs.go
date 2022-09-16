@@ -4,8 +4,9 @@ import (
 	fmt "fmt"
 	"math/big"
 
-	"github.com/babylonchain/babylon/x/btccheckpoint/btcutils"
-	btcchaincfg "github.com/btcsuite/btcd/chaincfg"
+	bbl "github.com/babylonchain/babylon/types"
+
+	txformat "github.com/babylonchain/babylon/btctxformatter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -15,30 +16,25 @@ var (
 	_ sdk.Msg = (*MsgInsertBTCSpvProof)(nil)
 )
 
-const (
-	// two proofs is babylon specific not bitcoin specific, that why it is defined
-	// here not in btcutils
-	// This could also be a parameter in config. At this time babylon expect 2,
-	// OP_RETRUN transactions with valid proofs.
-	expectedProofs = 2
-)
-
 // Parse and Validate transactions which should contain OP_RETURN data.
 // OP_RETURN bytes are not validated in any way. It is up to the caller attach
 // semantic meaning and validity to those bytes.
 // Returned ParsedProofs are in same order as raw proofs
-// TODO explore possibility of validating that output in second tx is payed by
-// input in the first tx
-func ParseTwoProofs(submitter sdk.AccAddress, proofs []*BTCSpvProof, powLimit *big.Int) (*RawCheckpointSubmission, error) {
-	if len(proofs) != expectedProofs {
+func ParseTwoProofs(
+	submitter sdk.AccAddress,
+	proofs []*BTCSpvProof,
+	powLimit *big.Int,
+	expectedTag txformat.BabylonTag) (*RawCheckpointSubmission, error) {
+	// Expecting as many proofs as many parts our checkpoint is composed of
+	if len(proofs) != txformat.NumberOfParts {
 		return nil, fmt.Errorf("expected at exactly valid op return transactions")
 	}
 
-	var parsedProofs []*btcutils.ParsedProof
+	var parsedProofs []*ParsedProof
 
 	for _, proof := range proofs {
 		parsedProof, e :=
-			btcutils.ParseProof(
+			ParseProof(
 				proof.BtcTransaction,
 				proof.BtcTransactionIndex,
 				proof.MerkleNodes,
@@ -53,7 +49,31 @@ func ParseTwoProofs(submitter sdk.AccAddress, proofs []*BTCSpvProof, powLimit *b
 		parsedProofs = append(parsedProofs, parsedProof)
 	}
 
-	sub := NewRawCheckpointSubmission(submitter, *parsedProofs[0], *parsedProofs[1])
+	var checkpointData [][]byte
+
+	for i, proof := range parsedProofs {
+		data, err := txformat.GetCheckpointData(
+			expectedTag,
+			txformat.CurrentVersion,
+			uint8(i),
+			proof.OpReturnData,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		checkpointData = append(checkpointData, data)
+	}
+
+	// at this point we know we have two correctly formated babylon op return transacitons
+	// we need to check if parts match
+	fullTxData, err := txformat.ConnectParts(txformat.CurrentVersion, checkpointData[0], checkpointData[1])
+
+	if err != nil {
+		return nil, err
+	}
+
+	sub := NewRawCheckpointSubmission(submitter, *parsedProofs[0], *parsedProofs[1], fullTxData)
 
 	return &sub, nil
 }
@@ -65,10 +85,11 @@ func (m *MsgInsertBTCSpvProof) ValidateBasic() error {
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid submitter address: %s", err)
 	}
 
-	// TODO get powLimit from some config
 	// result of parsed proof is not needed, drop it
 	// whole parsing stuff is stateless
-	_, err = ParseTwoProofs(address, m.Proofs, btcchaincfg.MainNetParams.PowLimit)
+	powLimit := bbl.GetGlobalPowLimit()
+
+	_, err = ParseTwoProofs(address, m.Proofs, &powLimit, bbl.GetGlobalCheckPointTag())
 
 	if err != nil {
 		return err

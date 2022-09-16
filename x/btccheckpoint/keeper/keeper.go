@@ -3,25 +3,27 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/tendermint/tendermint/libs/log"
+	"math/big"
 
-	bbl "github.com/babylonchain/babylon/types"
+	txformat "github.com/babylonchain/babylon/btctxformatter"
+	bbn "github.com/babylonchain/babylon/types"
 	"github.com/babylonchain/babylon/x/btccheckpoint/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
 
 type (
 	Keeper struct {
-		cdc                  codec.BinaryCodec
-		storeKey             sdk.StoreKey
-		memKey               sdk.StoreKey
-		paramstore           paramtypes.Subspace
-		btcLightClientKeeper types.BTCLightClientKeeper
-		checkpointingKeeper  types.CheckpointingKeeper
-		kDeep                uint64
-		wDeep                uint64
+		cdc                   codec.BinaryCodec
+		storeKey              sdk.StoreKey
+		memKey                sdk.StoreKey
+		paramstore            paramtypes.Subspace
+		btcLightClientKeeper  types.BTCLightClientKeeper
+		checkpointingKeeper   types.CheckpointingKeeper
+		powLimit              *big.Int
+		expectedCheckpointTag txformat.BabylonTag
 	}
 )
 
@@ -32,9 +34,9 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 	bk types.BTCLightClientKeeper,
 	ck types.CheckpointingKeeper,
-	// Those are node level constants should go to some kind of global node config
-	kDeep uint64,
-	wDeep uint64,
+	// TODO: Those are node level constants should go to some kind of global node config
+	powLimit *big.Int,
+	expectedTag txformat.BabylonTag,
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -42,31 +44,44 @@ func NewKeeper(
 	}
 
 	return Keeper{
-		cdc:                  cdc,
-		storeKey:             storeKey,
-		memKey:               memKey,
-		paramstore:           ps,
-		btcLightClientKeeper: bk,
-		checkpointingKeeper:  ck,
-		kDeep:                kDeep,
-		wDeep:                wDeep,
+		cdc:                   cdc,
+		storeKey:              storeKey,
+		memKey:                memKey,
+		paramstore:            ps,
+		btcLightClientKeeper:  bk,
+		checkpointingKeeper:   ck,
+		powLimit:              powLimit,
+		expectedCheckpointTag: expectedTag,
 	}
+}
+
+func (k Keeper) GetPowLimit() *big.Int {
+	return k.powLimit
+}
+
+func (k Keeper) GetExpectedTag() txformat.BabylonTag {
+	return k.expectedCheckpointTag
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-func (k Keeper) GetBlockHeight(ctx sdk.Context, b *bbl.BTCHeaderHashBytes) (uint64, error) {
+func (k Keeper) GetBlockHeight(ctx sdk.Context, b *bbn.BTCHeaderHashBytes) (uint64, error) {
 	return k.btcLightClientKeeper.BlockHeight(ctx, b)
 }
 
-func (k Keeper) CheckHeaderIsKnown(ctx sdk.Context, hash *bbl.BTCHeaderHashBytes) bool {
+func (k Keeper) CheckHeaderIsKnown(ctx sdk.Context, hash *bbn.BTCHeaderHashBytes) bool {
 	_, err := k.btcLightClientKeeper.MainChainDepth(ctx, hash)
 	return err == nil
 }
 
-func (k Keeper) MainChainDepth(ctx sdk.Context, hash *bbl.BTCHeaderHashBytes) (uint64, bool, error) {
+func (k Keeper) CheckHeaderIsOnMainChain(ctx sdk.Context, hash *bbn.BTCHeaderHashBytes) bool {
+	depth, err := k.btcLightClientKeeper.MainChainDepth(ctx, hash)
+	return err == nil && depth >= 0
+}
+
+func (k Keeper) MainChainDepth(ctx sdk.Context, hash *bbn.BTCHeaderHashBytes) (uint64, bool, error) {
 	depth, err := k.btcLightClientKeeper.MainChainDepth(ctx, hash)
 
 	if err != nil {
@@ -80,7 +95,7 @@ func (k Keeper) MainChainDepth(ctx sdk.Context, hash *bbl.BTCHeaderHashBytes) (u
 	return uint64(depth), true, nil
 }
 
-func (k Keeper) IsAncestor(ctx sdk.Context, parentHash *bbl.BTCHeaderHashBytes, childHash *bbl.BTCHeaderHashBytes) (bool, error) {
+func (k Keeper) IsAncestor(ctx sdk.Context, parentHash *bbn.BTCHeaderHashBytes, childHash *bbn.BTCHeaderHashBytes) (bool, error) {
 	return k.btcLightClientKeeper.IsAncestor(ctx, parentHash, childHash)
 }
 
@@ -250,11 +265,11 @@ func (k Keeper) checkSubmissionOnMainChain(ctx sdk.Context, sk types.SubmissionK
 }
 
 func (k Keeper) checkSubmissionConfirmed(ctx sdk.Context, sk types.SubmissionKey) (bool, bool, error) {
-	return k.checkSubmissionNDeepOnMainChain(ctx, sk, k.kDeep)
+	return k.checkSubmissionNDeepOnMainChain(ctx, sk, k.GetParams(ctx).BtcConfirmationDepth)
 }
 
 func (k Keeper) checkSubmissionFinlized(ctx sdk.Context, sk types.SubmissionKey) (bool, bool, error) {
-	return k.checkSubmissionNDeepOnMainChain(ctx, sk, k.wDeep)
+	return k.checkSubmissionNDeepOnMainChain(ctx, sk, k.GetParams(ctx).CheckpointFinalizationTimeout)
 }
 
 func (k Keeper) promoteUnconfirmedToConfirmed(ctx sdk.Context, sk types.SubmissionKey) {
